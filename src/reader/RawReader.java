@@ -18,31 +18,14 @@ import com.github.jinahya.bit.io.StreamInput;
 import com.github.jinahya.bit.io.StreamOutput;
 
 /**
- * @author Ataww
+ * <p>
+ * @author couretn
  *
  */
 public class RawReader {
 
 	private byte[] data;
-
-	/**
-	 * @param args
-	 * @throws IOException 
-	 */
-	public static void main(String[] args) throws IOException {
-		ByteOutput bo = new StreamOutput(new FileOutputStream("test.test"));
-		BitOutput bio = new DelegatedBitOutput(bo);
-		for(int i = 0; i < 5; i++) {
-			bio.writeBoolean(i % 2 == 0);
-		}
-		BitInput bii = new DelegatedBitInput(new StreamInput(new FileInputStream("test.test")));
-		for(int i = 0; i < 5; i++) {
-			System.out.println(bii.readBoolean());
-		}
-	}
 	
-	
-
 	public RawReader(String path) throws IOException {
 		FileInputStream fis = new FileInputStream(path);
 		long length = new File(path).length();
@@ -66,5 +49,9 @@ public class RawReader {
 		}
 		fis.close();
 	}
-
+	
+	public byte[] getData() {
+		return data;
+	}
+ 
 }
