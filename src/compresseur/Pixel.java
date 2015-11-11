@@ -1,3 +1,4 @@
+package compresseur;
 /**
  * Created by Thomas on 10/11/15.
  */
@@ -27,5 +28,9 @@ public class Pixel {
         } else {
             return 7;
         }
+    }
+    
+    public byte getValue() {
+    	return shadeOfGrey;
     }
 }

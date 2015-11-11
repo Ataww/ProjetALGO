@@ -1,3 +1,4 @@
+package compresseur;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -22,6 +23,14 @@ public class Sequence {
 
     public boolean isFull(){
         return pixels.size() >= 256;
+    }
+    
+    public int getNbPixel() {
+    	return pixels.size();
+    }
+    
+    public List<Pixel> getPixels() {
+    	return pixels;
     }
 
     public int getCompressionSize() {
