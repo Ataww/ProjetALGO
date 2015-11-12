@@ -1,3 +1,6 @@
+package compresseur;
+import compresseur.Pixel;
+
 import java.util.List;
 /**
  * Created by Thomas on 10/11/15.

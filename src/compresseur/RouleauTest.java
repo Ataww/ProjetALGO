@@ -1,3 +1,5 @@
+import compresseur.Pixel;
+import compresseur.Rouleau;
 import org.junit.Test;
 
 import java.util.ArrayList;
