@@ -34,7 +34,8 @@ public class RouleauTest {
         Pixel p2 = new Pixel(b2);
         ps.add(p2);
         rouleau = new Rouleau(ps);
-        assertEquals("Taille min must be", 29, rouleau.compresseur());
+        assertEquals("Taille min must be", 29, rouleau.compresseur(true, false));
+        assertEquals("Taille min must be", 29, rouleau.compresseur(false, false));
     }
 
     @Test
@@ -52,7 +53,8 @@ public class RouleauTest {
         Pixel p2 = new Pixel(b2);
         ps.add(p2);
         rouleau = new Rouleau(ps);
-        assertEquals("Taille min must be", 57, rouleau.compresseur());
+        assertEquals("Taille min must be", 57, rouleau.compresseur(true, false));
+        assertEquals("Taille min must be", 57, rouleau.compresseur(false, false));
     }
 
     @Test
@@ -73,7 +75,8 @@ public class RouleauTest {
         Pixel p2 = new Pixel(b2);
         ps.add(p2);
         rouleau = new Rouleau(ps);
-        assertEquals("Taille min must be", 14, rouleau.compresseur());
+        assertEquals("Taille min must be", 14, rouleau.compresseur(true, false));
+        assertEquals("Taille min must be", 14, rouleau.compresseur(false, false));
     }
 
     @Test
@@ -92,7 +95,8 @@ public class RouleauTest {
             //11+100*6 = 611
         }
         rouleau = new Rouleau(ps);
-        assertEquals("Taille min must be", 1122, rouleau.compresseur());
+        assertEquals("Taille min must be", 1122, rouleau.compresseur(true, false));
+        assertEquals("Taille min must be", 1122, rouleau.compresseur(false, false));
     }
 
     @Test
@@ -105,7 +109,12 @@ public class RouleauTest {
             ps.add(p);
         }
         rouleau = new Rouleau(ps);
-        rouleau.compresseur();
+        rouleau.compresseur(false, false);
         System.out.println(Rouleau.compteur);
+    }
+
+    @Test
+    public void testAllPicture() throws IOException {
+        String [] allFiles = {"Baboon.raw", "Barbara.raw", "Goldhill.raw", "Lena.raw", "Peppers"};
     }
 }

@@ -6,37 +6,38 @@ import java.util.List;
 public class Rouleau {
 
     private final List<Pixel> intputData;
-    static int compteur = 0;
+    static int compteur;
 
     public Rouleau(List<Pixel> pixels) {
         this.intputData = pixels;
     }
 
-    public int compresseur() {
-
-        //MEMOISATION
-        int[] minTaille = new int[intputData.size()];
-        for (int i = 0; i < intputData.size(); i++) {
-            minTaille[i] = -1;
-        }
+    public int compresseur(boolean iteratif, boolean display) {
+        compteur = 0;
+        int taille;
+        int[] mem;
         Sequence[] chemin = new Sequence[intputData.size()];
         for (int i = 0; i < intputData.size(); i++) {
             chemin[i] = null;
         }
-        //int taille = compute(s0, 0);
-        //int taille = computeMem(s0, 0, mem, true);
-        //int taille = sequence(0, minTaille, chemin);
-        //display(minTaille);
-        //displayChemin(chemin, 0);
-        int[] mem = new int[intputData.size()+1];
-        for (int i = 0; i < intputData.size(); i++) {
-            mem[i] = Integer.MAX_VALUE;
+        if (iteratif){
+            mem = new int[intputData.size()+1];
+            for (int i = 0; i < intputData.size(); i++) {
+                mem[i] = Integer.MAX_VALUE;
+            }
+            mem[intputData.size()]=0;
+            taille = sequenceIteratif(mem, chemin);
+        } else {
+            mem = new int[intputData.size()];
+            for (int i = 0; i < intputData.size(); i++) {
+                mem[i] = -1;
+            }
+            taille = sequence(0, mem, chemin);
         }
-        mem[intputData.size()]=0;
-        int taille = sequenceIteratif(mem, chemin);
-        display(mem);
-        System.out.println();
-        displayChemin(chemin, 0);
+        if (display){
+            display(mem);
+            displayChemin(chemin, 0);
+        }
         return taille;
     }
 
@@ -47,13 +48,6 @@ public class Rouleau {
     }
 
     private void displayChemin(Sequence[] chemin, int begin) {
-        /*if (begin >= chemin.length)
-            System.out.println("fin");
-        else {
-            System.out.println(
-                    "Sequence [pixels: " + chemin[begin].nbPixels + ", comp: " + chemin[begin].compression + "] ");
-            displayChemin(chemin, begin + chemin[begin].nbPixels);
-        }*/
         while (begin < intputData.size()){
             System.out.println(
                     "Sequence [pixels: " + chemin[begin].nbPixels + ", comp: " + chemin[begin].compression + "] ");
@@ -96,6 +90,7 @@ public class Rouleau {
         for (int idxPixel = intputData.size() - 1; idxPixel >= 0; idxPixel--) {
             int d = intputData.get(idxPixel).getMaxCompression();
             for (int j = 0; j < 255; ++j) {
+                compteur++;
                 int t = 11 + (j + 1) * (8 - d) + mem[idxPixel + j + 1];
                 if (t < mem[idxPixel]) {
                     mem[idxPixel] = t;
