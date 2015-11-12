@@ -50,7 +50,7 @@ public class SegWriter {
 	 * @param sequences
 	 * @throws IOException
 	 */
-	public void write(List<Sequence> sequences) throws IOException {
+	public void write(Sequence[] sequences) throws IOException {
 		int i = 0;
 		for(Sequence s : sequences) {
 			output.writeInt(8, s.nbPixels);
