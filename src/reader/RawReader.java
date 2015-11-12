@@ -9,39 +9,67 @@ import java.io.IOException;
 
 /**
  * <p>
+ * 
  * @author couretn
  *
  */
 public class RawReader {
 
 	private byte[] data;
-	
+	private long length;
+	private String path;
+
 	public RawReader(String path) throws IOException {
-		FileInputStream fis = new FileInputStream(path);
-		long length = new File(path).length();
-		int m = (int) Math.sqrt(length);
-		data = new byte[m * m];
-		byte[] buffer = new byte[m];
-		int offset = 0;
-		boolean flip = false;
-		while ((fis.read(buffer)) != -1) {
-			if (flip) {
-				for (int i = m - 1, j = offset; i >= 0; i--, j++) {
-					data[j] = buffer[i];
+		this.path = path;
+		length = new File(path).length();
+		data = new byte[(int) length];
+
+	}
+
+	public void read(boolean dauphin) throws IOException {
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(path);
+			int m = (int) Math.sqrt(length);
+			byte[] buffer = new byte[m];
+			int offset = 0;
+			if (dauphin) {
+				boolean flip = false;
+				while ((fis.read(buffer)) != -1) {
+					if (flip) {
+						for (int i = m - 1, j = offset; i >= 0; i--, j++) {
+							data[j] = buffer[i];
+						}
+					} else {
+						for (int i = 0; i < m; i++) {
+							data[i + offset] = buffer[i];
+						}
+					}
+					offset += m;
+					flip = !flip;
 				}
 			} else {
-				for (int i = 0; i < m; i++) {
-					data[i + offset] = buffer[i];
+				while ((fis.read(buffer)) != -1) {
+					for (int i = 0; i < m; i++) {
+						data[i + offset] = buffer[i];
+					}
 				}
+				offset += m;
 			}
-			offset += m;
-			flip = !flip;
+		} finally {
+			if (fis != null) {
+				fis.close();
+			}
 		}
-		fis.close();
+
 	}
-	
+
+	/**
+	 * 
+	 * @return
+	 */
 	public byte[] getData() {
 		return data;
 	}
- 
+
 }
