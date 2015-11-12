@@ -1,7 +1,6 @@
 package util;
 
 public class ImgMultiplier {
-	// even lines are flipped
 	private byte[] inputData;
 
 	public ImgMultiplier(byte[] input) {
@@ -9,16 +8,24 @@ public class ImgMultiplier {
 	}
 
 	public byte[] grow() {
-		byte[] output = new byte[4 * inputData.length];
+		
 		int m = (int) Math.sqrt(inputData.length);
+		byte[][] output = new byte[2*m][2*m];
 		for (int i = 0; i < m; i++) {
-			for (int j = i * m; j < (i + 1) * m; j++) {
-				byte b = inputData[j]; // pixel
-				int o = j * 2; // offset
-				output[o] = output[o + 1] = output[o + m] = output[o + m + 1] = b;
+			for(int j = 0; j < m; j++) {
+				byte b = inputData[i+j];
+				output[2*i][2*j] = output[2*i+1][2*j] = output[2*i][2*j+1] = output[2*i+1][2*j+1] = b;
 			}
 		}
-		return output;
+		byte[] result = new byte[4*inputData.length];
+		int offset = 0;
+		for(byte[] row : output) {
+			for(int i = 0; i < row.length; i++) {
+				result[i+offset] = row[i];
+			}
+			offset += row.length;
+		}
+		return result;
 	}
 
 }

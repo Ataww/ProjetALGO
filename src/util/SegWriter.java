@@ -3,7 +3,6 @@ package util;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import com.github.jinahya.bit.io.BitOutput;
 import com.github.jinahya.bit.io.DelegatedBitOutput;
@@ -51,14 +50,15 @@ public class SegWriter {
 	 * @throws IOException
 	 */
 	public void write(Sequence[] sequences) throws IOException {
-		int i = 0;
-		for(Sequence s : sequences) {
-			output.writeInt(8, s.nbPixels);
-			output.writeInt(3, s.compression);
-			for(int j = i;j < i+ s.nbPixels && j < inputData.length; j++) {
+		int begin = 0;
+		while(begin < inputData.length) {
+			Sequence s = sequences[begin];
+			output.writeUnsignedInt(8, s.nbPixels);
+			output.writeUnsignedInt(3, s.compression);
+			for(int j = begin;j < begin+ s.nbPixels && j < inputData.length; j++) {
 				output.writeUnsignedInt(8-s.compression, inputData[j]);
 			}
-			i += s.nbPixels;
+			begin += s.nbPixels;
 		}
 		output.align(1);
 	}

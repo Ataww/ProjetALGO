@@ -30,7 +30,7 @@ public class TestSegWriter {
 		writer.setInputData(new byte[] {0b00010010});
 		ArrayList<Sequence> a = new ArrayList<Sequence>();
 		a.add(s);
-		writer.write((Sequence[]) a.toArray());
+		writer.write(a.toArray(new Sequence[a.size()]));
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class TestSegWriter {
 		writer.setInputData(new byte[] {0b00010001, 0b00011011, 0b00010000});
 		ArrayList<Sequence> a = new ArrayList<Sequence>();
 		a.add(s);
-		writer.write((Sequence[]) a.toArray());
+		writer.write(a.toArray(new Sequence[a.size()]));
 	}
 
 }

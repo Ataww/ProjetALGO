@@ -10,7 +10,7 @@ public class Pixel {
     }
 
     public int getMaxCompression(){
-        int t = shadeOfGrey+127;
+        int t = shadeOfGrey & 0xff;
         if (t > 127)
             return 0;
         else if (t > 63)

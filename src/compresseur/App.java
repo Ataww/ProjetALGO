@@ -2,12 +2,11 @@ package compresseur;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import reader.RawReader;
 import util.ImgMultiplier;
 import util.RawWriter;
+import util.SegWriter;
 
 public class App {
 
@@ -45,7 +44,11 @@ public class App {
 		} else {
 			try {
 				RawReader rawReader = new RawReader(args[1]);
+				rawReader.read(true);
 				Rouleau compresseur = new Rouleau(rawReader.buildList());
+				compresseur.compresseur(args[0].equals("-i"), false);
+				SegWriter sw = new SegWriter(args[1].split(".")[0] + ".seg", rawReader.getData());
+				sw.write(compresseur.getChemin());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -34,8 +34,7 @@ public class SegReader {
 				int length = input.readUnsignedInt(8);
 				int cpr = input.readUnsignedInt(3);
 				for(int i = 0; i < length;i++) {
-					byte value = (byte) input.readUnsignedInt(5);
-					value &= mask(cpr);
+					byte value = (byte) input.readUnsignedInt(8-cpr);
 					data.add(new Pixel(value));
 				}
 			} catch(IOException e) {
@@ -44,14 +43,4 @@ public class SegReader {
 		}
 		return data;
 	}
-	
-	private byte mask(int cpr) {
-		byte mask = 0x00;
-		
-		for(int i = 0, offset = 1; i < cpr;i++, offset *= 2) {
-			mask |= offset;
-		}
-		return mask;
-	}
-	
 }

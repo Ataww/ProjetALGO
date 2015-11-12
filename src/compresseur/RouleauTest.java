@@ -3,6 +3,8 @@ import compresseur.Pixel;
 import compresseur.Rouleau;
 import org.junit.Test;
 import reader.RawReader;
+import util.ImgMultiplier;
+import util.RawWriter;
 import util.SegWriter;
 
 import java.io.File;
@@ -26,13 +28,13 @@ public class RouleauTest {
             ressés à 2 == 11 + 3*6 = 29
          */
         List<Pixel> ps = new ArrayList<>();
-        byte b = 31 - 127;
+        byte b = 31;
         Pixel p = new Pixel(b);
         ps.add(p);
-        byte b1 = 63 - 127;
+        byte b1 = 63;
         Pixel p1 = new Pixel(b1);
         ps.add(p1);
-        byte b2 = 31 - 127;
+        byte b2 = 31;
         Pixel p2 = new Pixel(b2);
         ps.add(p2);
         rouleau = new Rouleau(ps);
@@ -43,15 +45,15 @@ public class RouleauTest {
     @Test
     public void testCompression1(){
         List<Pixel>ps = new ArrayList<>();
-        byte b = 127;
+        byte b = (byte) 255;
         Pixel p = new Pixel(b);
         ps.add(p);
         for (int i = 0; i < 8; ++i){
-            byte b1 = 1 - 127 ;
+            byte b1 = 1;
             Pixel p1 = new Pixel(b1);
             ps.add(p1);
         }
-        byte b2 = 127;
+        byte b2 = (byte) 255;
         Pixel p2 = new Pixel(b2);
         ps.add(p2);
         rouleau = new Rouleau(ps);
@@ -67,13 +69,13 @@ public class RouleauTest {
             ressés à 7 == 11 + 3*1 = 14
          */
         List<Pixel> ps = new ArrayList<>();
-        byte b = 1 - 127;
+        byte b = 1;
         Pixel p = new Pixel(b);
         ps.add(p);
-        byte b1 = -127;
+        byte b1 = 0;
         Pixel p1 = new Pixel(b1);
         ps.add(p1);
-        byte b2 = -127;
+        byte b2 = 0;
         Pixel p2 = new Pixel(b2);
         ps.add(p2);
         rouleau = new Rouleau(ps);
@@ -85,13 +87,13 @@ public class RouleauTest {
     public void testCompression3(){
         List<Pixel> ps = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            byte b = 31-127; //00011111
+            byte b = 31; //00011111
             Pixel p = new Pixel(b);
             ps.add(p);
             //11+100*5 = 511
         }
         for (int i = 0; i < 100; i++) {
-            byte b = 63-127; //00111111
+            byte b = 63; //00111111
             Pixel p = new Pixel(b);
             ps.add(p);
             //11+100*6 = 611
@@ -143,12 +145,32 @@ public class RouleauTest {
         RawReader reader = new RawReader("Lena.raw");
         reader.read(true);
         Rouleau r = new Rouleau(reader.buildList());
-        r.compresseur(true, false);
+        r.compresseur(true, true);
         SegWriter w = new SegWriter("Lena.seg", reader.getData());
         w.write(r.getChemin());
         file = new File("Lena.seg");
         long sizeCompression = file.length();
-        float ratioCompression = sizeCompression/sizeOriginal * 100;
+        float ratioCompression = ((float)sizeCompression)/sizeOriginal;
         System.out.println(ratioCompression);
+    }
+    
+    @Test
+    public void testProcessBIG() throws IOException {
+    	RawReader reader = new RawReader("Lena.raw");
+    	reader.read(false);
+    	ImgMultiplier multiplier = new ImgMultiplier(reader.getData());
+    	byte[] big = multiplier.grow();
+    	RawWriter rawWriter = new RawWriter("Lena_g.raw");
+    	rawWriter.write(big);
+    	long orig = new File("Lena_g.raw").length();
+    	reader = new RawReader("Lena_g.raw");
+    	reader.read(true);
+    	Rouleau r = new Rouleau(reader.buildList());
+        r.compresseur(true, false);
+        SegWriter w = new SegWriter("Lena_g.seg", reader.getData());
+        w.write(r.getChemin());
+        long target = new File("Lena_g.seg").length();
+        double ratio = ((double)target)/orig;
+        System.out.println(ratio);
     }
 }
