@@ -9,7 +9,6 @@ import com.github.jinahya.bit.io.BitOutput;
 import com.github.jinahya.bit.io.DelegatedBitOutput;
 import com.github.jinahya.bit.io.StreamOutput;
 
-import compresseur.Pixel;
 import compresseur.Sequence;
 
 /**
@@ -21,6 +20,7 @@ import compresseur.Sequence;
 public class SegWriter {
 	
 	private BitOutput output;
+	private byte[] inputData;
 	
 	
 	/**
@@ -31,7 +31,17 @@ public class SegWriter {
 	 */
 	public SegWriter(String outputName) throws FileNotFoundException {
 		output = new DelegatedBitOutput(new StreamOutput(new FileOutputStream(outputName)));
-		
+	}
+	
+	/**
+	 * 
+	 * @param outputName
+	 * @param data
+	 * @throws FileNotFoundException
+	 */
+	public SegWriter(String outputName, byte[] data) throws FileNotFoundException {
+		this(outputName);
+		inputData = data;
 	}
 	
 	/**
@@ -41,14 +51,20 @@ public class SegWriter {
 	 * @throws IOException
 	 */
 	public void write(List<Sequence> sequences) throws IOException {
+		int i = 0;
 		for(Sequence s : sequences) {
-			output.writeInt(8, s.getNbPixel());
-			output.writeInt(3, s.getCompressionSize());
-			for(Pixel p : s.getPixels()) {
-				output.writeInt(s.getCompressionSize(), p.getValue());
+			output.writeInt(8, s.nbPixels);
+			output.writeInt(3, s.compression);
+			for(int j = i;j < i+ s.nbPixels; j++) {
+				output.writeInt(s.compression, inputData[j]);
 			}
+			i += s.nbPixels;
 		}
 		output.align(1);
+	}
+	
+	public void setInputData(byte[] data) {
+		this.inputData = data;
 	}
 
 }
