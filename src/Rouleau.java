@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 /**
  * Created by Thomas on 10/11/15.
@@ -12,75 +11,67 @@ public class Rouleau {
     }
 
     public int compresseur() {
-        List<Sequence> sequences = new ArrayList<>();
-        int compSize = intputData.get(0).getMaxCompression();
-        Sequence sequence = new Sequence(compSize);
-        sequence.add(intputData.get(0));
-        sequences.add(sequence);
 
         //MEMOISATION
-        int[][] mem = new int[intputData.size()][intputData.size()];
+        int[] minTaille = new int[intputData.size()];
         for (int i = 0; i < intputData.size(); i++) {
-            for (int j = 0; j < intputData.size(); j++)
-            mem[i][j] = -1;
+            minTaille[i] = -1;
         }
-        int taille = compute(sequence, 1, mem, 0);
-
+        Sequence[] chemin = new Sequence[intputData.size()];
         for (int i = 0; i < intputData.size(); i++) {
-            for (int j = 0; j < intputData.size(); j++)
-                System.out.print(mem[i][j] + " ");
-            System.out.println();
+            chemin[i] = null;
         }
+        //int taille = compute(s0, 0);
+        //int taille = computeMem(s0, 0, mem, true);
+        int taille = sequence(0, minTaille, chemin);
+        display(minTaille);
+        displayChemin(chemin, 0);
         return taille;
     }
 
-    /**
-     * retour de la taille minimum pour tout compresser
-     *
-     * @param s
-     * @param idxPixel
-     *
-     * @return
-     */
-    private int compute(Sequence s, int idxPixel, int[][] mem, int nbSequence) {
-        //cas de base
-        if (idxPixel >= intputData.size())
-            return s.getSize();
-        else {
-            if (mem[idxPixel][nbSequence] == -1) {
-                int compSize = intputData.get(idxPixel).getMaxCompression();
-                int nbSequenceSuiv = nbSequence + 1;
-                int newIdx = idxPixel + 1;
-
-                //cas nbPixInSeq == 256
-                if (s.isFull()) {
-                    Sequence newSequence = new Sequence(compSize);
-                    mem[idxPixel][nbSequence] = s.getSize()
-                                    + compute(newSequence, newIdx, mem,
-                                              nbSequenceSuiv);
-                    return mem[idxPixel][nbSequence];
-                }
-
-                //cas nouvelle sequence
-                Sequence newSequence = new Sequence(compSize);
-                newSequence.add(intputData.get(idxPixel));
-                int taille = s.getSize() + compute(newSequence, newIdx, mem, nbSequenceSuiv);
-
-                //cas continue sur la meme sequence
-                if (compSize < s.getCompressionSize())
-                    s.setCompressionSize(compSize);
-                s.add(intputData.get(idxPixel));
-                int taille1 = compute(s, newIdx, mem, nbSequence);
-
-                mem[idxPixel][nbSequence] = taille <= taille1 ? taille : taille1;
-            }
+    private void display(int[] mem) {
+        for (int i = 0; i < intputData.size(); i++) {
+            System.out.print(mem[i] + " ");
         }
-        return mem[idxPixel][nbSequence];
     }
 
-    /**
-     * min ( seq(i+1, n+1, d), 11+n(8-d)+ seq(i+1, 0, d)
-     *
-     * arret return 11+n(8-d)
-     */
+    private void displayChemin(Sequence[] chemin, int begin){
+        if (begin >= chemin.length - 1)
+            System.out.println("fin");
+        else{
+            System.out.println("Sequence [pixels: " + chemin[begin].nbPixels + ", comp: " + chemin[begin]
+                    .compression+"] ");
+            displayChemin(chemin, begin+chemin[begin].nbPixels);
+        }
+    }
+
+    private int sequence(int idxPixel, int[] mem, Sequence[] chemin) {
+        if (idxPixel == intputData.size()) {
+            return 0;
+        } else {
+            if (mem[idxPixel] == -1) {
+                mem[idxPixel] = Integer.MAX_VALUE;
+                int comp = intputData.get(idxPixel).getMaxCompression();
+                for (int i = 0; i < 255; ++i) {
+                    int t = (i+1) * (8 - comp) + 11 + sequence(idxPixel + i + 1, mem, chemin);
+                    if (t < mem[idxPixel]) {
+                        mem[idxPixel] = t;
+                        Sequence n = new Sequence();
+                        n.nbPixels = i+1;
+                        n.compression = comp;
+                        chemin[idxPixel] = n;
+                    }
+                    //si possible sur le suivant
+                    if (idxPixel+i+1 < intputData.size()){
+                        int newComp = intputData.get(idxPixel+i+1).getMaxCompression();
+                        if (comp > newComp)
+                            comp = newComp;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return mem[idxPixel];
+        }
+    }
 }
