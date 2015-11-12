@@ -35,6 +35,7 @@ public class Rouleau {
         mem[intputData.size()]=0;
         int taille = sequenceIteratif(mem, chemin);
         display(mem);
+        System.out.println();
         displayChemin(chemin, 0);
         return taille;
     }
@@ -46,12 +47,17 @@ public class Rouleau {
     }
 
     private void displayChemin(Sequence[] chemin, int begin) {
-        if (begin >= chemin.length)
+        /*if (begin >= chemin.length)
             System.out.println("fin");
         else {
             System.out.println(
                     "Sequence [pixels: " + chemin[begin].nbPixels + ", comp: " + chemin[begin].compression + "] ");
             displayChemin(chemin, begin + chemin[begin].nbPixels);
+        }*/
+        while (begin < intputData.size()){
+            System.out.println(
+                    "Sequence [pixels: " + chemin[begin].nbPixels + ", comp: " + chemin[begin].compression + "] ");
+            begin += chemin[begin].nbPixels;
         }
     }
 
