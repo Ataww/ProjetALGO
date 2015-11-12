@@ -3,9 +3,13 @@
  */
 package reader;
 
+import compresseur.Pixel;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -71,5 +75,13 @@ public class RawReader {
 	public byte[] getData() {
 		return data;
 	}
+
+    public List<Pixel> buildList() {
+        List<Pixel> pixels = new ArrayList<>(data.length);
+        for (byte b : data) {
+            pixels.add(new Pixel(b));
+        }
+        return pixels;
+    }
 
 }

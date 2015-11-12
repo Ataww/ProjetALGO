@@ -45,19 +45,13 @@ public class App {
 		} else {
 			try {
 				RawReader rawReader = new RawReader(args[1]);
-				Rouleau compresseur = new Rouleau(buildList(rawReader.getData()));
+				Rouleau compresseur = new Rouleau(rawReader.buildList());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private static List<Pixel> buildList(byte[] data) {
-		List<Pixel> pixels = new ArrayList<>(data.length);
-		for (byte b : data) {
-			pixels.add(new Pixel(b));
-		}
-		return pixels;
-	}
+
 
 }

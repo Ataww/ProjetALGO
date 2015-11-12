@@ -7,6 +7,7 @@ public class Rouleau {
 
     private final List<Pixel> intputData;
     static int compteur;
+    private Sequence[] chemin;
 
     public Rouleau(List<Pixel> pixels) {
         this.intputData = pixels;
@@ -16,7 +17,7 @@ public class Rouleau {
         compteur = 0;
         int taille;
         int[] mem;
-        Sequence[] chemin = new Sequence[intputData.size()];
+        chemin = new Sequence[intputData.size()];
         for (int i = 0; i < intputData.size(); i++) {
             chemin[i] = null;
         }
@@ -35,14 +36,14 @@ public class Rouleau {
             taille = sequence(0, mem, chemin);
         }
         if (display){
-            display(mem);
+            display(mem, intputData.size());
             displayChemin(chemin, 0);
         }
         return taille;
     }
 
-    private void display(int[] mem) {
-        for (int i = 0; i < intputData.size(); i++) {
+    public void display(int[] mem, int size) {
+        for (int i = 0; i < size; i++) {
             System.out.print(mem[i] + " ");
         }
     }
@@ -107,5 +108,9 @@ public class Rouleau {
             }
         }
         return mem[0];
+    }
+
+    public Sequence[] getChemin() {
+        return chemin;
     }
 }

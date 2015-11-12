@@ -3,7 +3,9 @@ import compresseur.Pixel;
 import compresseur.Rouleau;
 import org.junit.Test;
 import reader.RawReader;
+import util.SegWriter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,12 +104,7 @@ public class RouleauTest {
     @Test
     public void testCompressionBaboon() throws IOException {
         RawReader r = new RawReader("Baboon.raw");
-        byte[] data = r.getData();
-        List<Pixel> ps = new ArrayList<>();
-        for (int i = 0; i < data.length; i++) {
-            Pixel p = new Pixel(data[i]);
-            ps.add(p);
-        }
+        List<Pixel> ps = r.buildList();
         rouleau = new Rouleau(ps);
         rouleau.compresseur(false, false);
         System.out.println(Rouleau.compteur);
@@ -115,6 +112,43 @@ public class RouleauTest {
 
     @Test
     public void testAllPicture() throws IOException {
-        String [] allFiles = {"Baboon.raw", "Barbara.raw", "Goldhill.raw", "Lena.raw", "Peppers"};
+        String [] allFiles = {"Baboon.raw", "Barbara.raw", "Goldhill.raw", "Lena.raw", "Peppers.raw"};
+        //recursive
+        int [] recursiveResult = new int [allFiles.length];
+        int i = 0;
+        for(String s : allFiles){
+            RawReader r = new RawReader(s);
+            rouleau = new Rouleau(r.buildList());
+            rouleau.compresseur(false, false);
+            recursiveResult[i++]=Rouleau.compteur;
+        }
+        int [] iterativeResult = new int [allFiles.length];
+        i = 0;
+        for(String s : allFiles){
+            RawReader r = new RawReader(s);
+            rouleau = new Rouleau(r.buildList());
+            rouleau.compresseur(true, false);
+            iterativeResult[i++]=Rouleau.compteur;
+        }
+        rouleau.display(recursiveResult, recursiveResult.length);
+        System.out.println();
+        rouleau.display(iterativeResult, iterativeResult.length);
+
+    }
+
+    @Test
+    public void testProcess() throws IOException {
+        File file = new File("Lena.raw");
+        long sizeOriginal = file.length();
+        RawReader reader = new RawReader("Lena.raw");
+        reader.read(true);
+        Rouleau r = new Rouleau(reader.buildList());
+        r.compresseur(true, false);
+        SegWriter w = new SegWriter("Lena.seg", reader.getData());
+        w.write(r.getChemin());
+        file = new File("Lena.seg");
+        long sizeCompression = file.length();
+        float ratioCompression = sizeCompression/sizeOriginal * 100;
+        System.out.println(ratioCompression);
     }
 }

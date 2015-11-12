@@ -55,8 +55,8 @@ public class SegWriter {
 		for(Sequence s : sequences) {
 			output.writeInt(8, s.nbPixels);
 			output.writeInt(3, s.compression);
-			for(int j = i;j < i+ s.nbPixels; j++) {
-				output.writeInt(s.compression, inputData[j]);
+			for(int j = i;j < i+ s.nbPixels && j < inputData.length; j++) {
+				output.writeUnsignedInt(8-s.compression, inputData[j]);
 			}
 			i += s.nbPixels;
 		}
