@@ -8,9 +8,13 @@ import util.RawWriter;
 import util.SegWriter;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static org.junit.Assert.assertEquals;
 /**
@@ -195,5 +199,60 @@ public class RouleauTest {
         long target = new File("Lena_g.seg").length();
         double ratio = ((double)target)/orig;
         System.out.println(ratio);
+    }
+    
+    @Test
+    public void testAllBIG() throws IOException {
+    	Map<String, String> files = new HashMap<>();
+    	files.put("Lena.raw", "Lena_g");
+    	files.put("Baboon.raw", "Baboon_g");
+    	files.put("Barbara.raw", "Barbara_g");
+    	files.put("Goldhill.raw", "Goldhill_g");
+    	files.put("Peppers.raw", "Peppers_g");
+    	List<Double> resultats = new ArrayList<>(files.size());
+    	List<Long> temps = new ArrayList<>(files.size());
+    	for(Entry<String, String> e : files.entrySet()) {
+    		long orig = expand(e.getKey());
+    		long start = System.currentTimeMillis();
+    		RawReader reader = new RawReader(e.getValue()+".raw");
+    		reader.read(true);
+    		Rouleau r = new Rouleau(reader.buildList());
+    		r.compresseur(false, false);
+    		SegWriter w = new SegWriter(e.getValue()+".seg", reader.getData());
+    		w.write(r.getChemin());
+    		long end = System.currentTimeMillis();
+    		long compress = new File(e.getValue()+".seg").length();
+    		resultats.add(((double)compress)/orig);
+    		temps.add(end-start);
+    	}
+    	FileWriter fw = new FileWriter("resultats.txt");
+    	for(double d : resultats) {
+    		fw.write(d+";");
+    	}
+    	fw.flush();
+    	fw.close();
+    	fw = new FileWriter("temps.txt");
+    	for(long t : temps) {
+    		fw.write(t+";");
+    	}
+    	fw.flush();
+    	fw.close();
+    }
+    
+    private static long expand(String path) throws IOException {
+    	RawReader reader = new RawReader(path);
+    	reader.read(false);
+    	ImgMultiplier mult = new ImgMultiplier(reader.getData());
+    	byte[] res = mult.grow();
+    	String[] seg = path.split("\\.");
+    	StringBuilder sb = new StringBuilder(seg[0]);
+    	for(int i = 1; i < seg.length - 2; i++) {
+    		sb.append(seg[i]);
+    	}
+    	sb.append("_g");
+    	sb.append("."+seg[seg.length-1]);
+    	RawWriter writer = new RawWriter(sb.toString());
+    	writer.write(res);
+    	return new File(sb.toString()).length();
     }
 }
