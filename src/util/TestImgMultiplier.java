@@ -13,12 +13,14 @@ public class TestImgMultiplier {
 	
 	private ImgMultiplier multiplier;
 	private int length;
+	private byte[] inputData;
 
 	@Before
 	public void setUp() throws Exception {
 		RawReader reader = new RawReader("Barbara.raw");
 		reader.read(false);
 		byte[] data = reader.getData();
+		inputData = data;
 		length = data.length;
 		multiplier = new ImgMultiplier(data);
 	}
@@ -30,6 +32,7 @@ public class TestImgMultiplier {
 		byte[] res = multiplier.grow();
 		assertEquals(length*4, res.length);
 		assertEquals(res[1], res[0]);
+		assertEquals(inputData[0], res[0]);
 		RawWriter rw = new RawWriter("Barbara_g.raw");
 		rw.write(res);
 	}

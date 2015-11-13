@@ -1,9 +1,12 @@
 package reader;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class TestRawReader {
 	
@@ -16,7 +19,9 @@ public class TestRawReader {
 	@Test
 	public void testGetData() throws IOException {
 		reader = new RawReader("Baboon.raw");
-		assert(reader.getData().length != 0);
+		assertTrue(reader.getData().length != 0);
+		long length = new File("Baboon.raw").length();
+		assertEquals(length, reader.getData().length);
 	}
 
 }
