@@ -213,14 +213,14 @@ public class RouleauTest {
     	List<Long> temps = new ArrayList<>(files.size());
     	for(Entry<String, String> e : files.entrySet()) {
     		long orig = expand(e.getKey());
-    		long start = System.currentTimeMillis();
     		RawReader reader = new RawReader(e.getValue()+".raw");
     		reader.read(true);
     		Rouleau r = new Rouleau(reader.buildList());
+            long start = System.currentTimeMillis();
     		r.compresseur(false, false);
-    		SegWriter w = new SegWriter(e.getValue()+".seg", reader.getData());
+            long end = System.currentTimeMillis();
+            SegWriter w = new SegWriter(e.getValue()+".seg", reader.getData());
     		w.write(r.getChemin());
-    		long end = System.currentTimeMillis();
     		long compress = new File(e.getValue()+".seg").length();
     		resultats.add(((double)compress)/orig);
     		temps.add(end-start);
