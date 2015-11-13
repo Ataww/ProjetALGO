@@ -1,5 +1,6 @@
 package compresseur;
 import java.util.List;
+import java.util.Objects;
 /**
  * Created by Thomas on 10/11/15.
  */
@@ -43,6 +44,12 @@ public class Rouleau {
     }
 
     public void display(int[] mem, int size) {
+        for (int i = 0; i < size; i++) {
+            System.out.print(mem[i] + " ");
+        }
+    }
+
+    public void display(long[] mem, int size) {
         for (int i = 0; i < size; i++) {
             System.out.print(mem[i] + " ");
         }
